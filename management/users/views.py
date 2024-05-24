@@ -51,10 +51,18 @@ class TeacherView(ListAPIView):
     serializer_class = UserViewSerializer
 
 
-class StudentView(ListAPIView):
+class StudentView(APIView):
     permission_classes = (IsAuthenticated,)
-    queryset = CustomUser.objects.filter(role='Student')
-    serializer_class = UserViewSerializer
+
+    def get(self, request):
+        user = request.user
+        if user.is_staff or user.role == 'Teacher':
+            queryset = CustomUser.objects.filter(role='Student')
+            serializer = UserViewSerializer(queryset)
+            return Response(serializer.data)
+
+        else:
+            raise PermissionDenied("Only admin users and Teachers can view all students.")
 
 
 
