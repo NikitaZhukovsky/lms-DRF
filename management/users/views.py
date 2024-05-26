@@ -64,5 +64,3 @@ class StudentView(APIView):
         else:
             raise PermissionDenied("Only admin users and Teachers can view all students.")
 
-
-
