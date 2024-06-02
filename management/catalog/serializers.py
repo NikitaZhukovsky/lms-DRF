@@ -8,5 +8,8 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'description', 'format', 'date_start', 'date_end', 'teacher')
 
 
-class DeleteCourseSerializer(serializers.Serializer):
-    course_id = serializers.IntegerField()
+class CourseModuleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CourseModule
+        fields = ('id', 'course', 'title', 'description')
+

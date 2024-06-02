@@ -1,10 +1,11 @@
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from catalog.models import Course, CourseModule, Lesson, LessonContent
-from catalog.serializers import CourseSerializer, DeleteCourseSerializer
+from catalog.serializers import CourseSerializer, CourseModuleSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404
 
 
 class CourseListView(ListAPIView):
@@ -13,7 +14,7 @@ class CourseListView(ListAPIView):
     permission_classes = (AllowAny, )
 
 
-class CourseView(APIView):
+class AddCourseView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
@@ -26,17 +27,17 @@ class CourseView(APIView):
         else:
             raise PermissionDenied("Only staff users can add course.")
 
-    def delete(self, request):
-        input_serializer = DeleteCourseSerializer(data=request.data)
-        input_serializer.is_valid(raise_exception=True)
-        user = request.user
-        if user.is_staff:
-            course = Course.objects.get(id=input_serializer.data["course_id"]).delete()
-        return Response()
 
+class CourseView(APIView):
+    permission_classes = (IsAuthenticated, )
 
-class CourseUpdateView(APIView):
-    permission_classes = (IsAuthenticated,)
+    def get(self, request, course_id):
+        try:
+            course = get_object_or_404(Course, id=course_id)
+            serializer = CourseSerializer(course, many=True)
+            return Response(serializer.data)
+        except Course.DoesNotExist:
+            raise PermissionDenied("Course not found")
 
     def put(self, request, course_id):
         user = request.user
@@ -44,7 +45,7 @@ class CourseUpdateView(APIView):
             try:
                 course = Course.objects.get(id=course_id)
             except Course.DoesNotExist:
-                return Response(status=404)
+                raise PermissionDenied("Course not found")
 
             input_serializer = CourseSerializer(instance=course, data=request.data)
             input_serializer.is_valid(raise_exception=True)
@@ -52,3 +53,68 @@ class CourseUpdateView(APIView):
             return Response()
         else:
             raise PermissionDenied("Only staff users can update a course.")
+
+    def delete(self, request, course_id):
+        user = request.user
+        if user.is_staff:
+            try:
+                Course.objects.get(id=course_id).delete()
+                return Response()
+            except Course.DoesNotExist:
+                raise PermissionDenied("Course not found")
+        else:
+            raise PermissionDenied("Only staff users can delete a course")
+
+
+class AddCourseModuleView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        input_serializer = CourseModuleSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        user = request.user
+        if user.is_staff:
+            input_serializer.save()
+            return Response()
+        else:
+            raise PermissionDenied("Only staff users can add module.")
+
+
+class CourseModuleView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, module_id):
+        try:
+            module = get_object_or_404(CourseModule, id=module_id)
+            serializer = CourseModuleSerializer(module, many=True)
+            return Response(serializer.data)
+        except CourseModule.DoesNotExist:
+            raise PermissionDenied("Module not found")
+
+    def put(self, request, module_id):
+        user = request.user
+        if user.is_staff:
+            try:
+                module = CourseModule.objects.get(id=module_id)
+            except CourseModule.DoesNotExist:
+                raise PermissionDenied("Module not found")
+            input_serializer = CourseModuleSerializer(instance=module, data=request.data)
+            input_serializer.is_valid(raise_exception=True)
+            input_serializer.save()
+            return Response()
+        else:
+            raise PermissionDenied("Only staff users can update a module.")
+
+    def delete(self, request, module_id):
+        user = request.user
+        if user.is_staff:
+            try:
+                CourseModule.objects.get(id=module_id).delete()
+                return Response()
+            except CourseModule.DoesNotExist:
+                raise PermissionDenied("Module not found")
+        else:
+            raise PermissionDenied("Only staff users can delete a module")
+
+
+
