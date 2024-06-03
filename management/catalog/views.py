@@ -32,21 +32,14 @@ class CourseView(APIView):
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, course_id):
-        try:
-            course = get_object_or_404(Course, id=course_id)
-            serializer = CourseSerializer(course, many=True)
-            return Response(serializer.data)
-        except Course.DoesNotExist:
-            raise PermissionDenied("Course not found")
+        course = get_object_or_404(Course, id=course_id)
+        serializer = CourseSerializer(course, many=True)
+        return Response(serializer.data)
 
     def put(self, request, course_id):
         user = request.user
         if user.is_staff:
-            try:
-                course = Course.objects.get(id=course_id)
-            except Course.DoesNotExist:
-                raise PermissionDenied("Course not found")
-
+            course = get_object_or_404(Course, id=course_id)
             input_serializer = CourseSerializer(instance=course, data=request.data)
             input_serializer.is_valid(raise_exception=True)
             input_serializer.save()
@@ -57,11 +50,8 @@ class CourseView(APIView):
     def delete(self, request, course_id):
         user = request.user
         if user.is_staff:
-            try:
-                Course.objects.get(id=course_id).delete()
-                return Response()
-            except Course.DoesNotExist:
-                raise PermissionDenied("Course not found")
+            get_object_or_404(Course, id=course_id).delete()
+            return Response()
         else:
             raise PermissionDenied("Only staff users can delete a course")
 
@@ -84,20 +74,14 @@ class CourseModuleView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, module_id):
-        try:
-            module = get_object_or_404(CourseModule, id=module_id)
-            serializer = CourseModuleSerializer(module, many=True)
-            return Response(serializer.data)
-        except CourseModule.DoesNotExist:
-            raise PermissionDenied("Module not found")
+        module = get_object_or_404(CourseModule, id=module_id)
+        serializer = CourseModuleSerializer(module, many=True)
+        return Response(serializer.data)
 
     def put(self, request, module_id):
         user = request.user
         if user.is_staff:
-            try:
-                module = CourseModule.objects.get(id=module_id)
-            except CourseModule.DoesNotExist:
-                raise PermissionDenied("Module not found")
+            module = get_object_or_404(CourseModule, id=module_id)
             input_serializer = CourseModuleSerializer(instance=module, data=request.data)
             input_serializer.is_valid(raise_exception=True)
             input_serializer.save()
@@ -108,11 +92,9 @@ class CourseModuleView(APIView):
     def delete(self, request, module_id):
         user = request.user
         if user.is_staff:
-            try:
-                CourseModule.objects.get(id=module_id).delete()
-                return Response()
-            except CourseModule.DoesNotExist:
-                raise PermissionDenied("Module not found")
+            get_object_or_404(CourseModule, id=module_id).delete()
+            return Response()
+
         else:
             raise PermissionDenied("Only staff users can delete a module")
 
