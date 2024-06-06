@@ -1,7 +1,7 @@
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from catalog.models import Course, CourseModule, Lesson, LessonContent
-from catalog.serializers import CourseSerializer, CourseModuleSerializer
+from catalog.serializers import CourseSerializer, CourseModuleSerializer, LessonSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
@@ -33,7 +33,7 @@ class CourseView(APIView):
 
     def get(self, request, course_id):
         course = get_object_or_404(Course, id=course_id)
-        serializer = CourseSerializer(course, many=True)
+        serializer = CourseSerializer(course)
         return Response(serializer.data)
 
     def put(self, request, course_id):
@@ -56,6 +56,12 @@ class CourseView(APIView):
             raise PermissionDenied("Only staff users can delete a course")
 
 
+class ModuleListView(ListAPIView):
+    queryset = CourseModule.objects.all()
+    serializer_class = CourseModuleSerializer
+    permission_classes = (IsAuthenticated, )
+
+
 class AddCourseModuleView(APIView):
     permission_classes = (IsAuthenticated,)
 
@@ -75,7 +81,7 @@ class CourseModuleView(APIView):
 
     def get(self, request, module_id):
         module = get_object_or_404(CourseModule, id=module_id)
-        serializer = CourseModuleSerializer(module, many=True)
+        serializer = CourseModuleSerializer(module)
         return Response(serializer.data)
 
     def put(self, request, module_id):
@@ -94,9 +100,55 @@ class CourseModuleView(APIView):
         if user.is_staff:
             get_object_or_404(CourseModule, id=module_id).delete()
             return Response()
-
         else:
             raise PermissionDenied("Only staff users can delete a module")
 
+
+class LessonListView(ListAPIView):
+    queryset = Lesson.objects.all()
+    serializer_class = LessonSerializer
+    permission_classes = (IsAuthenticated, )
+
+
+class AddLessonView(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def post(self, request):
+        input_serializer = LessonSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        user = request.user
+        if user.is_staff or user.role == "Teacher":
+            input_serializer.save()
+            return Response()
+        else:
+            raise PermissionDenied("Only staff users can add lesson.")
+
+
+class LessonView(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, lesson_id):
+        lesson = get_object_or_404(Lesson, id=lesson_id)
+        serializer = LessonSerializer(lesson)
+        return Response(serializer.data)
+
+    def put(self, request, lesson_id):
+        user = request.user
+        if user.is_staff or user.role == "Teacher":
+            lesson = get_object_or_404(Lesson, id=lesson_id)
+            input_serializer = LessonSerializer(instance=lesson, data=request.data)
+            input_serializer.is_valid(raise_exception=True)
+            input_serializer.save()
+            return Response()
+        else:
+            raise PermissionDenied("Only staff users and teacher can update lesson.")
+
+    def delete(self, request, lesson_id):
+        user = request.user
+        if user.is_staff or user.role == "Teacher":
+            get_object_or_404(Lesson, id=lesson_id).delete()
+            return Response()
+        else:
+            raise PermissionDenied("Only staff users and teachers can delete lesson.")
 
 
