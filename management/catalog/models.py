@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import CustomUser
+from storages.backends.s3boto3 import S3Boto3Storage
 
 
 class Course(models.Model):
@@ -63,4 +64,5 @@ class Lesson(models.Model):
 
 class LessonContent(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
-    file = models.FileField(upload_to='lessons_files/', null=True)
+    name = models.CharField(max_length=100, default=None, null=True, blank=True)
+    file = models.FileField(upload_to='lessons_files/', null=True, blank=True)

@@ -1,11 +1,14 @@
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from catalog.models import Course, CourseModule, Lesson, LessonContent
-from catalog.serializers import CourseSerializer, CourseModuleSerializer, LessonSerializer
+from catalog.serializers import CourseSerializer, CourseModuleSerializer, LessonSerializer, LessonContentSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework import viewsets, status
 from rest_framework.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
+from rest_framework.parsers import MultiPartParser, FormParser
+from django.core.files.storage import default_storage
 
 
 class CourseListView(ListAPIView):
@@ -152,3 +155,13 @@ class LessonView(APIView):
             raise PermissionDenied("Only staff users and teachers can delete lesson.")
 
 
+class LessonContentViewSet(viewsets.ModelViewSet):
+    queryset = LessonContent.objects.all()
+    serializer_class = LessonContentSerializer
+    parser_classes = (MultiPartParser, FormParser)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.file.delete(False)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)

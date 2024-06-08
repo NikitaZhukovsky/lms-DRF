@@ -29,3 +29,11 @@ class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = ('id', 'title', 'module', 'type', 'description', 'date_time')
+
+
+class LessonContentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LessonContent
+        fields = ('id', 'lesson', 'name', 'file')
+
+
