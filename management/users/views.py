@@ -42,7 +42,7 @@ class AddTeacherView(APIView):
             except CustomUser.DoesNotExist:
                 raise status.HTTP_404_NOT_FOUND
         else:
-            raise PermissionDenied("Only admin users can update other users roles.")
+            raise PermissionDenied("Only staff users can update other users roles.")
 
 
 class TeacherView(ListAPIView):
