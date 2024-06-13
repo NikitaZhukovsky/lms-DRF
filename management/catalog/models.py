@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import CustomUser
+from storages.backends.s3boto3 import S3Boto3Storage
 
 
 class Course(models.Model):
@@ -20,13 +21,11 @@ class Course(models.Model):
 
 class CourseImage(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='courses_images/')
+    name = models.CharField(max_length=100, default=None, null=True, blank=True)
+    file = models.ImageField(upload_to='courses_images/')
 
 
 class StudentCourse(models.Model):
-    """
-    m2m table linking students and courses
-    """
     student = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=False, blank=False)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=False, blank=False)
 
@@ -63,4 +62,5 @@ class Lesson(models.Model):
 
 class LessonContent(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
-    file = models.FileField(upload_to='lessons_files/', null=True)
+    name = models.CharField(max_length=100, default=None, null=True, blank=True)
+    file = models.FileField(upload_to='lessons_files/', null=True, blank=True)

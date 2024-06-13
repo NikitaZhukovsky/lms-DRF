@@ -1,154 +1,157 @@
-from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
-from catalog.models import Course, CourseModule, Lesson, LessonContent
-from catalog.serializers import CourseSerializer, CourseModuleSerializer, LessonSerializer
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from catalog.models import Course, CourseModule, Lesson, LessonContent, StudentCourse, CourseImage
+from catalog.serializers import (CourseSerializer, CourseModuleSerializer,
+                                 LessonSerializer, LessonContentSerializer,
+                                 StudentCourseSerializer, CourseImageSerializer)
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.exceptions import PermissionDenied
-from django.shortcuts import get_object_or_404
+from rest_framework import viewsets, status
+from rest_framework.exceptions import PermissionDenied, NotFound
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
-class CourseListView(ListAPIView):
+class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = (AllowAny, )
+    permission_classes = [IsAuthenticated, ]
 
-
-class AddCourseView(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def post(self, request):
-        input_serializer = CourseSerializer(data=request.data)
-        input_serializer.is_valid(raise_exception=True)
+    def create(self, request, *args, **kwargs):
         user = request.user
         if user.is_staff:
-            input_serializer.save()
-            return Response()
+            return super().create(request, *args, **kwargs)
         else:
-            raise PermissionDenied("Only staff users can add course.")
+            raise PermissionDenied("Only staff users can add courses.")
 
-
-class CourseView(APIView):
-    permission_classes = (IsAuthenticated, )
-
-    def get(self, request, course_id):
-        course = get_object_or_404(Course, id=course_id)
-        serializer = CourseSerializer(course)
-        return Response(serializer.data)
-
-    def put(self, request, course_id):
+    def update(self, request, *args, **kwargs):
         user = request.user
         if user.is_staff:
-            course = get_object_or_404(Course, id=course_id)
-            input_serializer = CourseSerializer(instance=course, data=request.data)
-            input_serializer.is_valid(raise_exception=True)
-            input_serializer.save()
-            return Response()
+            return super().update(request, *args, **kwargs)
         else:
-            raise PermissionDenied("Only staff users can update a course.")
+            raise PermissionDenied("Only staff users can update courses.")
 
-    def delete(self, request, course_id):
+    def destroy(self, request, *args, **kwargs):
         user = request.user
         if user.is_staff:
-            get_object_or_404(Course, id=course_id).delete()
-            return Response()
+            return super().destroy(request, *args, **kwargs)
         else:
-            raise PermissionDenied("Only staff users can delete a course")
+            raise PermissionDenied("Only staff users can delete courses.")
 
 
-class ModuleListView(ListAPIView):
+class CourseModuleViewSet(viewsets.ModelViewSet):
     queryset = CourseModule.objects.all()
     serializer_class = CourseModuleSerializer
-    permission_classes = (IsAuthenticated, )
+    permission_classes = [IsAuthenticated, ]
 
-
-class AddCourseModuleView(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def post(self, request):
-        input_serializer = CourseModuleSerializer(data=request.data)
-        input_serializer.is_valid(raise_exception=True)
+    def create(self, request, *args, **kwargs):
         user = request.user
         if user.is_staff:
-            input_serializer.save()
-            return Response()
+            return super().create(request, *args, **kwargs)
         else:
-            raise PermissionDenied("Only staff users can add module.")
+            raise PermissionDenied("Only staff users can add modules.")
 
-
-class CourseModuleView(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def get(self, request, module_id):
-        module = get_object_or_404(CourseModule, id=module_id)
-        serializer = CourseModuleSerializer(module)
-        return Response(serializer.data)
-
-    def put(self, request, module_id):
+    def update(self, request, *args, **kwargs):
         user = request.user
         if user.is_staff:
-            module = get_object_or_404(CourseModule, id=module_id)
-            input_serializer = CourseModuleSerializer(instance=module, data=request.data)
-            input_serializer.is_valid(raise_exception=True)
-            input_serializer.save()
-            return Response()
+            return super().update(request, *args, **kwargs)
         else:
-            raise PermissionDenied("Only staff users can update a module.")
+            raise PermissionDenied("Only staff users can update modules.")
 
-    def delete(self, request, module_id):
+    def destroy(self, request, *args, **kwargs):
         user = request.user
         if user.is_staff:
-            get_object_or_404(CourseModule, id=module_id).delete()
-            return Response()
+            return super().destroy(request, *args, **kwargs)
         else:
-            raise PermissionDenied("Only staff users can delete a module")
+            raise PermissionDenied("Only staff users can delete modules.")
 
 
-class LessonListView(ListAPIView):
+class LessonViewSet(viewsets.ModelViewSet):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = (IsAuthenticated, )
+    permission_classes = [IsAuthenticated, ]
 
-
-class AddLessonView(APIView):
-    permission_classes = (IsAuthenticated, )
-
-    def post(self, request):
-        input_serializer = LessonSerializer(data=request.data)
-        input_serializer.is_valid(raise_exception=True)
+    def create(self, request, *args, **kwargs):
         user = request.user
         if user.is_staff or user.role == "Teacher":
+            return super().create(request, *args, **kwargs)
+        else:
+            raise PermissionDenied("Only staff users and teachers can add lessons.")
+
+    def update(self, request, *args, **kwargs):
+        user = request.user
+        if user.is_staff or user.role == "Teacher":
+            return super().update(request, *args, **kwargs)
+        else:
+            raise PermissionDenied("Only staff users and teachers can update lessons.")
+
+    def destroy(self, request, *args, **kwargs):
+        user = request.user
+        if user.is_staff or user.role == "Teacher":
+            return super().destroy(request, *args, **kwargs)
+        else:
+            raise PermissionDenied("Only staff users and teachers can delete lessons.")
+
+
+class StudentCourseViewSet(viewsets.ModelViewSet):
+    queryset = StudentCourse.objects.all()
+    serializer_class = StudentCourseSerializer
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        if user.is_staff:
+            input_serializer = self.get_serializer(data=request.data)
+            input_serializer.is_valid(raise_exception=True)
+            student = input_serializer.validated_data['student']
+            student.role = 'Student'
+            student.save()
             input_serializer.save()
             return Response()
         else:
-            raise PermissionDenied("Only staff users can add lesson.")
+            raise PermissionDenied("Only staff users can add students to courses.")
 
-
-class LessonView(APIView):
-    permission_classes = (IsAuthenticated, )
-
-    def get(self, request, lesson_id):
-        lesson = get_object_or_404(Lesson, id=lesson_id)
-        serializer = LessonSerializer(lesson)
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
-    def put(self, request, lesson_id):
-        user = request.user
-        if user.is_staff or user.role == "Teacher":
-            lesson = get_object_or_404(Lesson, id=lesson_id)
-            input_serializer = LessonSerializer(instance=lesson, data=request.data)
-            input_serializer.is_valid(raise_exception=True)
-            input_serializer.save()
-            return Response()
-        else:
-            raise PermissionDenied("Only staff users and teacher can update lesson.")
+    def get_student_courses(self, request, student_id, *args, **kwargs):
+        try:
+            student_courses = StudentCourse.objects.filter(student_id=student_id)
+            serializer = self.get_serializer(student_courses, many=True)
+            return Response(serializer.data)
+        except StudentCourse.DoesNotExist:
+            raise NotFound(f"No student-course relationships found for student with ID {student_id}")
 
-    def delete(self, request, lesson_id):
-        user = request.user
-        if user.is_staff or user.role == "Teacher":
-            get_object_or_404(Lesson, id=lesson_id).delete()
-            return Response()
-        else:
-            raise PermissionDenied("Only staff users and teachers can delete lesson.")
+    def delete_student_from_course(self, request, student_id):
+        try:
+            student_courses = StudentCourse.objects.filter(student_id=student_id)
+            student_courses.delete()
+            return Response(status=204)
+        except StudentCourse.DoesNotExist:
+            raise NotFound(f"No student-course relationships found for student with ID {student_id}")
 
 
+class LessonContentViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated, )
+    queryset = LessonContent.objects.all()
+    serializer_class = LessonContentSerializer
+    parser_classes = (MultiPartParser, FormParser)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.file.delete(False)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CourseImageViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated, )
+    queryset = CourseImage.objects.all()
+    serializer_class = CourseImageSerializer
+    parser_classes = (MultiPartParser, FormParser)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.file.delete(False)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -1,16 +1,19 @@
-from django.contrib import admin
-from django.urls import path
-from catalog.views import (CourseListView, AddCourseView, CourseView, ModuleListView, AddCourseModuleView,
-                           CourseModuleView, LessonListView, AddLessonView, LessonView)
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from catalog.views import (CourseViewSet, CourseModuleViewSet, LessonViewSet, LessonContentViewSet,
+                        StudentCourseViewSet, CourseImageViewSet)
+
+router = DefaultRouter()
+router.register(r'lesson-content', LessonContentViewSet, basename='lesson_content')
+router.register(r'course-image', CourseImageViewSet, basename='course_image')
+router.register(r'lessons', LessonViewSet, basename='lesson')
+router.register(r'modules', CourseModuleViewSet, basename='module')
+router.register(r'courses', CourseViewSet, basename='course')
+router.register(r'students', StudentCourseViewSet, basename='student')
 
 urlpatterns = [
-    path('courses/', CourseListView.as_view(), name='courses'),
-    path('add-course/', AddCourseView.as_view(), name='add_course'),
-    path('course/<int:course_id>/', CourseView.as_view(), name='course'),
-    path('modules/', ModuleListView.as_view(), name='modules'),
-    path('add-module/', AddCourseModuleView.as_view(), name='add_module'),
-    path('module/<int:module_id>/', CourseModuleView.as_view(), name='module'),
-    path('lessons/', LessonListView.as_view(), name='lessons'),
-    path('add-lesson/', AddLessonView.as_view(), name='add_lesson'),
-    path('lesson/<int:lesson_id>/', LessonView.as_view(), name='lesson')
+    path('', include(router.urls)),
+    path('students/<int:student_id>/courses/', StudentCourseViewSet.as_view({'get': 'get_student_courses',
+                                                                             'delete': 'delete_student_from_course'}),
+         name='students')
 ]
