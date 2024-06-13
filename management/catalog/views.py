@@ -1,4 +1,3 @@
-from rest_framework.views import APIView
 from catalog.models import Course, CourseModule, Lesson, LessonContent, StudentCourse, CourseImage
 from catalog.serializers import (CourseSerializer, CourseModuleSerializer,
                                  LessonSerializer, LessonContentSerializer,
@@ -8,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets, status
 from rest_framework.exceptions import PermissionDenied, NotFound
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.http import FileResponse
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -137,6 +137,30 @@ class LessonContentViewSet(viewsets.ModelViewSet):
     serializer_class = LessonContentSerializer
     parser_classes = (MultiPartParser, FormParser)
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        response = FileResponse(instance.file, as_attachment=True, filename=instance.file.name)
+        return response
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        response_data = serializer.data
+
+        for data in response_data:
+            data['file'] = request.build_absolute_uri(data['file'])
+
+        return Response(response_data)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        response_data = serializer.data
+        response_data['file'] = request.build_absolute_uri(response_data['file'])
+        headers = self.get_success_headers(serializer.data)
+        return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
+
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.file.delete(False)
@@ -149,6 +173,30 @@ class CourseImageViewSet(viewsets.ModelViewSet):
     queryset = CourseImage.objects.all()
     serializer_class = CourseImageSerializer
     parser_classes = (MultiPartParser, FormParser)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        response = FileResponse(instance.file, as_attachment=True, filename=instance.file.name)
+        return response
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        response_data = serializer.data
+
+        for data in response_data:
+            data['file'] = request.build_absolute_uri(data['file'])
+
+        return Response(response_data)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        response_data = serializer.data
+        response_data['file'] = request.build_absolute_uri(response_data['file'])
+        headers = self.get_success_headers(serializer.data)
+        return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
