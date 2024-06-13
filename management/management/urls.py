@@ -23,9 +23,41 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
 
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Snippets API",
+        default_version='v1',
+        description="Test description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@snippets.local"),
+        license=openapi.License(name="BSD License"),
+    ),
+    patterns=[
+        path('catalog/', include(('catalog.urls', 'catalog'), namespace='catalog')),
+        path('users/', include(('users.urls', 'users'), namespace='users')),
+    ],
+    public=True,
+    permission_classes=[permissions.AllowAny,],
+)
+
 urlpatterns = [
 
+    path(
+        'doc/',
+        TemplateView.as_view(
+            template_name='swaggerui/swaggerui.html',
+            extra_context={'schema_url': 'openapi-schema'}
+        ),
+        name='swagger-ui'),
+
+    path(
+            r'^swagger(?P<format>\.json|\.yaml)$',
+            schema_view.without_ui(cache_timeout=0),
+            name='schema-json'
+        ),
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
-    path('catalog/', include('catalog.urls'))
+    path('catalog/', include('catalog.urls')),
 ]
+
+
