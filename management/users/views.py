@@ -1,13 +1,12 @@
 from djoser.views import UserViewSet
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
-from rest_framework.exceptions import PermissionDenied
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from users.serializers import CustomUserSerializer, UserViewSerializer
+from rest_framework.exceptions import PermissionDenied, NotFound
+from rest_framework.permissions import IsAuthenticated
+from users.serializers import CustomUserSerializer, UserViewSerializer, UserUpdateSerializer
 from users.models import CustomUser
-from rest_framework import status
-from django.http import JsonResponse
+from rest_framework import status, viewsets
+from rest_framework import generics
 
 
 class ActivateUser(UserViewSet):
@@ -45,22 +44,56 @@ class AddTeacherView(APIView):
             raise PermissionDenied("Only staff users can update other users roles.")
 
 
-class TeacherView(ListAPIView):
+class TeacherViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAuthenticated,)
-    queryset = CustomUser.objects.filter(role='Teacher')
     serializer_class = UserViewSerializer
 
-
-class StudentView(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def get(self, request):
-        user = request.user
+    def get_queryset(self):
+        user = self.request.user
         if user.is_staff or user.role == 'Teacher':
-            queryset = CustomUser.objects.filter(role='Student')
-            serializer = UserViewSerializer(queryset)
-            return Response(serializer.data)
+            return CustomUser.objects.filter(role='Teacher')
+        else:
+            raise PermissionDenied("Only admin users and Teachers can view all teachers.")
 
+    def retrieve(self, request, pk=None):
+        try:
+            teacher = self.get_queryset().get(pk=pk)
+            serializer = self.serializer_class(teacher)
+            return Response(serializer.data)
+        except CustomUser.DoesNotExist:
+            raise NotFound(f"No Teacher found with ID {pk}")
+
+
+class StudentViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserViewSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff or user.role == 'Teacher':
+            return CustomUser.objects.filter(role='Student')
         else:
             raise PermissionDenied("Only admin users and Teachers can view all students.")
+
+    def retrieve(self, request, pk=None):
+        try:
+            student = self.get_queryset().get(pk=pk)
+            serializer = self.serializer_class(student)
+            return Response(serializer.data)
+        except CustomUser.DoesNotExist:
+            raise NotFound(f"No Teacher found with ID {pk}")
+
+
+class UserUpdateView(generics.UpdateAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserUpdateSerializer
+
+    def get_object(self):
+        return self.request.user
+
+    def perform_update(self, serializer):
+        if self.get_object() != self.request.user:
+            raise PermissionDenied("You can only update your own profile.")
+        serializer.save()
+
 

@@ -49,7 +49,9 @@ INSTALLED_APPS = [
     'users',
     'rest_framework',
     'djoser',
-    'storages'
+    'storages',
+    'drf_yasg',
+
 ]
 
 MIDDLEWARE = [
@@ -70,7 +72,7 @@ ROOT_URLCONF = 'management.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -204,7 +206,6 @@ SWAGGER_SETTINGS = {
         }
     }
 }
-
 
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost'
 CELERY_RESULT_BACKEND = 'rpc://'

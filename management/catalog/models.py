@@ -21,13 +21,11 @@ class Course(models.Model):
 
 class CourseImage(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='courses_images/')
+    name = models.CharField(max_length=100, default=None, null=True, blank=True)
+    file = models.ImageField(upload_to='courses_images/')
 
 
 class StudentCourse(models.Model):
-    """
-    m2m table linking students and courses
-    """
     student = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=False, blank=False)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=False, blank=False)
 

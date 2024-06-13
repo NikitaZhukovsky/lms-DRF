@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from catalog.models import Course, CourseModule, Lesson, LessonContent
+from catalog.models import Course, CourseModule, Lesson, LessonContent, StudentCourse, CourseImage
 from users.models import CustomUser
 
 
@@ -10,7 +10,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    teacher = UserSerializer(read_only=True)
 
     class Meta:
         model = Course
@@ -18,7 +17,6 @@ class CourseSerializer(serializers.ModelSerializer):
 
 
 class CourseModuleSerializer(serializers.ModelSerializer):
-    course = CourseSerializer(read_only=True)
 
     class Meta:
         model = CourseModule
@@ -35,5 +33,17 @@ class LessonContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = LessonContent
         fields = ('id', 'lesson', 'name', 'file')
+
+
+class StudentCourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentCourse
+        fields = ('id', 'student', 'course')
+
+
+class CourseImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CourseImage
+        fields = ('id', 'course', 'name', 'file')
 
 
