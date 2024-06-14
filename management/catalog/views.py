@@ -2,12 +2,13 @@ from catalog.models import Course, CourseModule, Lesson, LessonContent, StudentC
 from catalog.serializers import (CourseSerializer, CourseModuleSerializer,
                                  LessonSerializer, LessonContentSerializer,
                                  StudentCourseSerializer, CourseImageSerializer)
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework import viewsets, status
 from rest_framework.exceptions import PermissionDenied, NotFound
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.http import FileResponse
+from catalog.permissions.student_permissions import HasModuleAccess, HasLessonAccess, HasLessonContentAccess
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -40,9 +41,10 @@ class CourseViewSet(viewsets.ModelViewSet):
 class CourseModuleViewSet(viewsets.ModelViewSet):
     queryset = CourseModule.objects.all()
     serializer_class = CourseModuleSerializer
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated, HasModuleAccess]
 
     def create(self, request, *args, **kwargs):
+        self.permission_classes = [IsAuthenticated, IsAdminUser]
         user = request.user
         if user.is_staff:
             return super().create(request, *args, **kwargs)
@@ -50,6 +52,7 @@ class CourseModuleViewSet(viewsets.ModelViewSet):
             raise PermissionDenied("Only staff users can add modules.")
 
     def update(self, request, *args, **kwargs):
+        self.permission_classes = [IsAuthenticated, IsAdminUser]
         user = request.user
         if user.is_staff:
             return super().update(request, *args, **kwargs)
@@ -57,6 +60,7 @@ class CourseModuleViewSet(viewsets.ModelViewSet):
             raise PermissionDenied("Only staff users can update modules.")
 
     def destroy(self, request, *args, **kwargs):
+        self.permission_classes = [IsAuthenticated, IsAdminUser]
         user = request.user
         if user.is_staff:
             return super().destroy(request, *args, **kwargs)
@@ -67,25 +71,28 @@ class CourseModuleViewSet(viewsets.ModelViewSet):
 class LessonViewSet(viewsets.ModelViewSet):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated, HasLessonAccess]
 
     def create(self, request, *args, **kwargs):
+        self.permission_classes = [IsAuthenticated, IsAdminUser]
         user = request.user
-        if user.is_staff or user.role == "Teacher":
+        if user.is_staff:
             return super().create(request, *args, **kwargs)
         else:
             raise PermissionDenied("Only staff users and teachers can add lessons.")
 
     def update(self, request, *args, **kwargs):
+        self.permission_classes = [IsAuthenticated, IsAdminUser]
         user = request.user
-        if user.is_staff or user.role == "Teacher":
+        if user.is_staff:
             return super().update(request, *args, **kwargs)
         else:
             raise PermissionDenied("Only staff users and teachers can update lessons.")
 
     def destroy(self, request, *args, **kwargs):
+        self.permission_classes = [IsAuthenticated, IsAdminUser]
         user = request.user
-        if user.is_staff or user.role == "Teacher":
+        if user.is_staff:
             return super().destroy(request, *args, **kwargs)
         else:
             raise PermissionDenied("Only staff users and teachers can delete lessons.")
@@ -94,7 +101,7 @@ class LessonViewSet(viewsets.ModelViewSet):
 class StudentCourseViewSet(viewsets.ModelViewSet):
     queryset = StudentCourse.objects.all()
     serializer_class = StudentCourseSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, ]
 
     def create(self, request, *args, **kwargs):
         user = request.user
@@ -132,7 +139,7 @@ class StudentCourseViewSet(viewsets.ModelViewSet):
 
 
 class LessonContentViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = [IsAuthenticated, HasLessonContentAccess]
     queryset = LessonContent.objects.all()
     serializer_class = LessonContentSerializer
     parser_classes = (MultiPartParser, FormParser)
@@ -153,6 +160,7 @@ class LessonContentViewSet(viewsets.ModelViewSet):
         return Response(response_data)
 
     def create(self, request, *args, **kwargs):
+        self.permission_classes = [IsAuthenticated, IsAdminUser]
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -162,6 +170,7 @@ class LessonContentViewSet(viewsets.ModelViewSet):
         return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
 
     def destroy(self, request, *args, **kwargs):
+        self.permission_classes = [IsAuthenticated, IsAdminUser]
         instance = self.get_object()
         instance.file.delete(False)
         self.perform_destroy(instance)
@@ -169,7 +178,7 @@ class LessonContentViewSet(viewsets.ModelViewSet):
 
 
 class CourseImageViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = [IsAuthenticated, ]
     queryset = CourseImage.objects.all()
     serializer_class = CourseImageSerializer
     parser_classes = (MultiPartParser, FormParser)
