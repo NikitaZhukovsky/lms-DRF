@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.db.models import Avg
+from group.permissions.teacher_permission import IsTeacherOrAdmin
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -22,7 +23,7 @@ class StudentGroupViewSet(viewsets.ModelViewSet):
 
 
 class StudentLessonViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [IsAuthenticated, IsTeacherOrAdmin]
     queryset = StudentLesson.objects.all()
     serializer_class = StudentLessonSerializer
     parser_classes = [MultiPartParser, FormParser]
