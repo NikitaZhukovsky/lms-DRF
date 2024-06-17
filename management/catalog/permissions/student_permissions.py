@@ -1,6 +1,17 @@
 from rest_framework import permissions
-from catalog.models import StudentCourse, CourseModule, Lesson, LessonContent
+from catalog.models import Course, StudentCourse, CourseModule, Lesson, LessonContent
 from rest_framework.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404
+
+
+class HasCourseAccess(permissions.BasePermission):
+    def has_permission(self, request, view):
+        course_id = view.kwargs.get('course_id')
+        student = request.user
+        course = get_object_or_404(Course, id=course_id)
+        if student.is_authenticated and StudentCourse.objects.filter(student=student, course=course).exists():
+            return True
+        return False
 
 
 class HasModuleAccess(permissions.BasePermission):
@@ -29,7 +40,7 @@ class HasLessonAccess(permissions.BasePermission):
         if user.is_staff:
             return True
         else:
-            lesson_id = view.kwargs.get('pk')
+            lesson_id = view.kwargs.get('lesson_id')
             try:
                 lesson = Lesson.objects.get(pk=lesson_id)
             except Lesson.DoesNotExist:

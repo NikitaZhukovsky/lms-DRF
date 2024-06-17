@@ -1,19 +1,24 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from catalog.views import (CourseViewSet, CourseModuleViewSet, LessonViewSet, LessonContentViewSet,
-                        StudentCourseViewSet, CourseImageViewSet)
+from catalog.views.course_views import CourseView, CourseViewSet
+from catalog.views.module_views import CourseModuleView, CourseModuleViewSet
+from catalog.views.lesson_views import LessonView, LessonViewSet
+from catalog.views.student_course_views import StudentCourseView, StudentCourseViewSet
+from catalog.views.file_views import LessonContentViewSet
 
 router = DefaultRouter()
 router.register(r'lesson-content', LessonContentViewSet, basename='lesson_content')
-router.register(r'course-image', CourseImageViewSet, basename='course_image')
-router.register(r'lessons', LessonViewSet, basename='lesson')
-router.register(r'modules', CourseModuleViewSet, basename='module')
-router.register(r'courses', CourseViewSet, basename='course')
-router.register(r'students', StudentCourseViewSet, basename='student')
+# router.register(r'course-image', CourseImageViewSet, basename='course_image')
+
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('students/<int:student_id>/courses/', StudentCourseViewSet.as_view({'get': 'get_student_courses',
-                                                                             'delete': 'delete_student_from_course'}),
-         name='students')
+    path('courses/', CourseView.as_view(), name='courses'),
+    path('courses/<int:course_id>', CourseViewSet.as_view(), name="courses_set"),
+    path('modules/', CourseModuleView.as_view(), name='modules'),
+    path('modules/<int:module_id>', CourseModuleViewSet.as_view(), name='modules_set'),
+    path('lessons/', LessonView.as_view(), name='lessons'),
+    path('lessons/<int:lesson_id>', LessonViewSet.as_view(), name='lessons_set'),
+    path('students/', StudentCourseView.as_view(), name="students"),
+    path('students/<int:student_course_id>/', StudentCourseViewSet.as_view(), name='students_set'),
 ]
