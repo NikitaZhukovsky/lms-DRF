@@ -5,8 +5,9 @@ from rest_framework.response import Response
 from rest_framework import viewsets, status
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.http import FileResponse
-from catalog.permissions.student_permissions import  HasLessonContentAccess
+from catalog.permissions.student_permissions import HasLessonContentAccess
 from catalog.tasks import delete_lesson_content
+from django.core.files.storage import default_storage
 
 
 class LessonContentViewSet(viewsets.ModelViewSet):
@@ -45,8 +46,9 @@ class LessonContentViewSet(viewsets.ModelViewSet):
         self.permission_classes = [IsAuthenticated, IsAdminUser]
         instance = self.get_object()
         lesson_id = instance.lesson_id
+        if instance.file:
+            default_storage.delete(instance.file.name)
         delete_lesson_content(lesson_id)
-        instance.file.delete(False)
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -56,6 +58,7 @@ class CourseImageViewSet(viewsets.ModelViewSet):
     queryset = CourseImage.objects.all()
     serializer_class = CourseImageSerializer
     parser_classes = (MultiPartParser, FormParser)
+    http_method_names = ['get', 'post', 'head', 'options', 'delete']
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -82,7 +85,9 @@ class CourseImageViewSet(viewsets.ModelViewSet):
         return Response(response_data, status=status.HTTP_201_CREATED, headers=headers)
 
     def destroy(self, request, *args, **kwargs):
+        self.permission_classes = [IsAuthenticated, IsAdminUser]
         instance = self.get_object()
-        instance.file.delete(False)
+        if instance.file:
+            default_storage.delete(instance.file.name)
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)

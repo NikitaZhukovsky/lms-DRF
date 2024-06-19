@@ -4,11 +4,11 @@ from catalog.views.course_views import CourseView, CourseViewSet
 from catalog.views.module_views import CourseModuleView, CourseModuleViewSet
 from catalog.views.lesson_views import LessonView, LessonViewSet
 from catalog.views.student_course_views import StudentCourseView, StudentCourseViewSet
-from catalog.views.file_views import LessonContentViewSet
+from catalog.views.file_views import LessonContentViewSet, CourseImageViewSet
 
 router = DefaultRouter()
 router.register(r'lesson-content', LessonContentViewSet, basename='lesson_content')
-# router.register(r'course-image', CourseImageViewSet, basename='course_image')
+router.register(r'course-image', CourseImageViewSet, basename='course_image')
 
 
 urlpatterns = [

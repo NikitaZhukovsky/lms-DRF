@@ -4,35 +4,6 @@ from rest_framework.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 
 
-class HasCourseAccess(permissions.BasePermission):
-    def has_permission(self, request, view):
-        course_id = view.kwargs.get('course_id')
-        student = request.user
-        course = get_object_or_404(Course, id=course_id)
-        if student.is_authenticated and StudentCourse.objects.filter(student=student, course=course).exists():
-            return True
-        return False
-
-
-class HasModuleAccess(permissions.BasePermission):
-
-    def has_permission(self, request, view):
-        user = request.user
-        if user.is_staff:
-            return True
-        else:
-            module_id = view.kwargs.get('pk')
-            student = user
-            try:
-                module = CourseModule.objects.get(pk=module_id)
-            except CourseModule.DoesNotExist:
-                raise PermissionDenied('Module does not exist')
-
-            course = module.course
-
-            return StudentCourse.objects.filter(student=student, course=course).exists()
-
-
 class HasLessonAccess(permissions.BasePermission):
 
     def has_permission(self, request, view):
