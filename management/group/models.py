@@ -5,7 +5,7 @@ from users.models import CustomUser
 
 class Group(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, null=False, blank=False)
+    name = models.CharField(max_length=100, null=False, blank=False, unique=True)
 
 
 class StudentGroup(models.Model):

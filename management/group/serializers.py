@@ -13,8 +13,23 @@ class StudentGroupSerializer(serializers.ModelSerializer):
         model = StudentGroup
         fields = ['id', 'group', 'student']
 
+    def validate(self, data):
+        group = data['group']
+        student = data['student']
+        if StudentGroup.objects.filter(group=group, student=student).exists():
+            raise serializers.ValidationError("Such record is already exists.")
+        return data
+
 
 class StudentLessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudentLesson
         fields = ['id', 'lesson', 'student', 'mark', 'attendance']
+
+    def validate(self, data):
+        lesson = data['lesson']
+        student = data['student']
+        if StudentLesson.objects.filter(lesson=lesson, student=student).exists():
+            raise serializers.ValidationError("Such record is already exists.")
+        return data
+

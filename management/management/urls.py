@@ -34,7 +34,7 @@ schema_view = get_schema_view(
     patterns=[
         path('catalog/', include(('catalog.urls', 'catalog'), namespace='catalog')),
         path('users/', include(('users.urls', 'users'), namespace='users')),
-        path('group/', include(('group.urls', 'group'), namespace='group'))
+        path('study/', include(('group.urls', 'group'), namespace='group'))
     ],
     public=True,
     permission_classes=[permissions.AllowAny,],
@@ -58,7 +58,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
     path('catalog/', include('catalog.urls')),
-    path('group/', include('group.urls'))
+    path('study/', include('group.urls'))
 ]
 
 
