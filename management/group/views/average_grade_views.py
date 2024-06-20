@@ -1,35 +1,9 @@
-from group.models import Group, StudentGroup, StudentLesson
-from group.serializers import (GroupSerializer, StudentGroupSerializer, StudentLessonSerializer)
+from group.models import StudentGroup, StudentLesson
+from group.serializers import StudentLessonSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework import viewsets
-from rest_framework.parsers import MultiPartParser, FormParser
 from django.db.models import Avg
-from group.permissions.teacher_permission import IsTeacherOrAdmin
-
-
-class GroupViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, IsAdminUser]
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
-    parser_classes = [MultiPartParser, FormParser]
-    http_method_names = ['get', 'post', 'put', 'head', 'options', 'delete']
-
-
-class StudentGroupViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, IsAdminUser]
-    queryset = StudentGroup.objects.all()
-    serializer_class = StudentGroupSerializer
-    parser_classes = [MultiPartParser, FormParser]
-    http_method_names = ['get', 'post', 'put', 'head', 'options', 'delete']
-
-
-class StudentLessonViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, IsTeacherOrAdmin]
-    queryset = StudentLesson.objects.all()
-    serializer_class = StudentLessonSerializer
-    parser_classes = [MultiPartParser, FormParser]
-    http_method_names = ['get', 'post', 'put', 'head', 'options', 'delete']
 
 
 class StudentAverageGradeViewSet(viewsets.ReadOnlyModelViewSet):
@@ -75,3 +49,4 @@ class GroupAverageGradeViewSet(viewsets.ReadOnlyModelViewSet):
             return Response(response_data)
         else:
             return Response({'error': 'Group ID is required'}, status=400)
+
