@@ -9,12 +9,11 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 app.autodiscover_tasks()
 
-app.conf.beat_schedule = {
-    'check_login': {
+CELERY_BEAT_SCHEDULE = {
+    'send_monthly_report': {
         'task': 'users.tasks.send_monthly_report',
-        'schedule': crontab(minute='*/1')
-    }
+        'schedule': crontab(day_of_month='1'),
+    },
 }
-
 
 
