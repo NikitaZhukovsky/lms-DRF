@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'djoser',
     'storages',
     'drf_yasg',
-
+    'django_celery_beat'
 ]
 
 MIDDLEWARE = [
