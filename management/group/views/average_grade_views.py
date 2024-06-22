@@ -1,6 +1,6 @@
-from group.models import StudentGroup, StudentLesson
-from group.serializers import StudentLessonSerializer
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from group.models import StudentGroup, StudentLesson, Group
+from group.serializers import StudentLessonSerializer, StudentGroupSerializer
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.response import Response
 from rest_framework import viewsets
 from django.db.models import Avg
@@ -49,4 +49,25 @@ class GroupAverageGradeViewSet(viewsets.ReadOnlyModelViewSet):
             return Response(response_data)
         else:
             return Response({'error': 'Group ID is required'}, status=400)
+
+
+class AllGroupsAverageGradeViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [AllowAny]
+    serializer_class = StudentLessonSerializer
+    http_method_names = ['get']
+
+    def get_queryset(self):
+        return Group.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        response_data = []
+        for group in queryset:
+            student_ids = StudentGroup.objects.filter(group=group).values_list('student_id', flat=True)
+            average_grade = StudentLesson.objects.filter(student__in=student_ids).aggregate(average=Avg('mark'))['average']
+            response_data.append({
+                'group_id': group.id,
+                'group_average_grade': average_grade
+            })
+        return Response(response_data)
 
