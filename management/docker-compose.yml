@@ -1,0 +1,60 @@
+version: "3"
+
+services:
+  app:
+    command: >
+      sh -c "
+          sleep 10 &&
+          python3 manage.py migrate &&
+          python3 manage.py createsuperuser --noinput &&
+          python3 manage.py runserver 0.0.0.0:8000"
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+  db:
+    image: postgres:12.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=$DATABASE_USER
+      - POSTGRES_PASSWORD=$DATABASE_PASSWORD
+      - POSTGRES_DB=$DATABASE_NAME
+    ports:
+      - "5433:5432"
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  celery:
+    restart: always
+    build:
+      context: .
+    command: >
+      sh -c "sleep 10 && celery -A management worker -l info"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - app
+      - rabbitmq
+
+  celery-beat:
+    restart: always
+    build:
+      context: .
+    command: >
+      sh -c "sleep 10 && celery -A management beat -l info"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - app
+      - rabbitmq
+
+volumes:
+  postgres_data:
