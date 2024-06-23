@@ -2,7 +2,10 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from group.views.group_lesson_views import GroupViewSet, StudentLessonViewSet
 from group.views.student_group_views import StudentGroupView, StudentGroupViewSet
-from group.views.average_grade_views import GroupAverageGradeViewSet, StudentAverageGradeViewSet, AllGroupsAverageGradeViewSet
+from group.views.average_grade_views import (GroupAverageGradeViewSet, StudentAverageGradeViewSet,
+                                             AllGroupsAverageGradeViewSet, AllStudentAverageGradeViewSet)
+
+from group.views.attendance_percent_views import AttendancePercentageView
 
 router = DefaultRouter()
 router.register(r'groups', GroupViewSet, basename='group')
@@ -18,5 +21,8 @@ urlpatterns = [
          name='group-average-grade'),
     path('average-grade/', AllGroupsAverageGradeViewSet.as_view({'get': 'list'}),
           name='all_groups_average_grade'),
+    path('students/average-grade/', AllStudentAverageGradeViewSet.as_view({'get': 'list'}),
+         name='all_students_average_grader'),
+    path('students/attendance_percentage/', AttendancePercentageView.as_view(), name='attendance_percentage')
 ]
 

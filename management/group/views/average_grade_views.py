@@ -24,6 +24,31 @@ class StudentAverageGradeViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(response_data)
 
 
+class AllStudentAverageGradeViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+    serializer_class = StudentLessonSerializer
+    http_method_names = ['get']
+
+    def get_queryset(self):
+        return StudentLesson.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        students = queryset.values('student').annotate(average_grade=Avg('mark'))
+
+        response_data = []
+        for student in students:
+            student_id = student['student']
+            average_grade = student['average_grade'] or 0.0
+
+            response_data.append({
+                'student_id': student_id,
+                'average_grade': average_grade
+            })
+
+        return Response(response_data)
+
+
 class GroupAverageGradeViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated, IsAdminUser]
     serializer_class = StudentLessonSerializer

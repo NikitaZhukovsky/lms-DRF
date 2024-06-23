@@ -6,7 +6,6 @@ GROUP_URL = "http://127.0.0.1:8000/study/groups/"
 GROUP_AVERAGE_GRADE_URL = "http://127.0.0.1:8000/study/groups/{group_id}/average-grade/"
 
 
-
 def fetch_group_average_grade(group_id):
     headers = {
         "Authorization": f"Bearer {st.session_state.get('access_token')}"
