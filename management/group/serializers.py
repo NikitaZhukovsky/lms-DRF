@@ -14,11 +14,10 @@ class StudentGroupSerializer(serializers.ModelSerializer):
         fields = ['id', 'group', 'student']
 
     def validate(self, data):
-        group = data['group']
         student = data['student']
-        if StudentGroup.objects.filter(group=group, student=student).exists():
-            raise serializers.ValidationError("Such record is already exists.")
-        return data
+
+        if StudentGroup.objects.filter(student=student).exists():
+            raise serializers.ValidationError("You can't add a student to another group")
 
 
 class StudentLessonSerializer(serializers.ModelSerializer):
