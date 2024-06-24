@@ -15,6 +15,17 @@ services:
       - "8000:8000"
     depends_on:
       - db
+  streamlit:
+    restart: always
+    image: python:3.10.2
+    command: sh -c "pip install streamlit requests && 
+                streamlit run --server.port 8501 /app/app.py"
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./streamlit:/app
+    depends_on:
+      - app
   db:
     image: postgres:12.0-alpine
     volumes:
