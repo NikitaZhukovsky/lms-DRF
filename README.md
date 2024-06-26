@@ -122,3 +122,8 @@ cd management
 ```bash
 docker-compose up --build
 ```
+Previously, in the `.env` file, you need to change the following parameters:  
+
+DATABASE_HOST=db   
+CELERY_HOST=rabbitmq    
+
