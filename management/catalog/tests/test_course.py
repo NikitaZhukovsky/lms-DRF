@@ -5,10 +5,12 @@ from django.urls import reverse
 from datetime import date
 from catalog.models import Course
 
+
 @pytest.mark.django_db
 def test_create_course_as_admin():
-
     User = get_user_model()
+    User.objects.all().delete()
+    Course.objects.all().delete()
     admin_user = User.objects.create_superuser(
         email='admin@example.com',
         password='adminpassword',
