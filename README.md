@@ -1,6 +1,6 @@
 # Learning management system using Django REST Framework
-Feature-rich learning management system. You may want to build a learning management system for a school organization or just for the sake of learning the tech stack and building your portfolio, either way, this project would be a good kickstart for you.
-## Current features
+Feature-rich learning management system. You may want to build a learning management system for a school organization or just for the sake of learning the tech stack, either way, this project would be a good kickstart for you.
+## Current features:
 
 - Registration and authentication (JWT) of users with email confirmation.
 - Editing a user's profile.
@@ -21,7 +21,8 @@ Feature-rich learning management system. You may want to build a learning manage
 - Generating reports on academic performance and attendance.
 - An application on Streamlit to get statistics on the average score and attendance of classes
 - Swagger  
-- Prospector  
+- Prospector
+- Pytest
 
 # Database Models:
 ![db-scheme](https://github.com/NikitaZhukovsky/lms-DRF/blob/master/assets/lms.png)
@@ -41,6 +42,7 @@ Students average grade:
 - Python3.8+
 - PostgreSQL
 - RabbitMQ
+- Postman  
 - Yandex Cloud account
 - Docker
 
@@ -114,6 +116,28 @@ streamlit run app.py
 
 Last but not least, go to this address http://127.0.0.1:8000 and streamlit: http://localhost:8501  
 To get the API documentation, you can add it to the url **/doc** and swagger will open.
+
+# Pytest:
+- Test for creating and deleting a course.  
+- Test for creating and deleting a course module.
+- Test for creating and deleting a lesson.
+- Test for creating a group.
+- Auth test.
+
+To run the tests, you need to:  
+```bash
+cd management
+```
+
+```bash
+pytest
+```
+# Prospector:
+To start the prospector, you need to enter the command:
+```bash
+prospector
+```
+
 
 # Alternatively, you can create a container from a Docker image:
 ```bash
