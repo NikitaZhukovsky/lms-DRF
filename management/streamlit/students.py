@@ -3,7 +3,8 @@ import requests
 
 STUDENTS_URL = "http://127.0.0.1:8000/users/students/{id}/"
 AVERAGE_GRADE_URL = "http://127.0.0.1:8000/study/students/average-grade/"
-ATTENDANCE_PERCENTAGE_URL = "http://127.0.0.1:8000/study/students/attendance_percentage/"
+ATTENDANCE_PERCENTAGE_URL = "http://127.0.0.1:8000/study/students/attendance-percentage/"
+
 
 def fetch_students_average_grade():
     headers = {
@@ -17,6 +18,7 @@ def fetch_students_average_grade():
         st.error("Failed to fetch students average grade.")
         return []
 
+
 def fetch_attendance_percentage():
     headers = {
         "Authorization": f"Bearer {st.session_state.get('access_token')}"
@@ -28,6 +30,7 @@ def fetch_attendance_percentage():
     else:
         st.error("Failed to fetch attendance percentage.")
         return []
+
 
 def fetch_student_info(student_id):
     headers = {
@@ -41,6 +44,7 @@ def fetch_student_info(student_id):
     else:
         st.error(f"Failed to fetch student info for student ID {student_id}.")
         return None
+
 
 def students_page(students, attendance_percentage):
     col1, col2, col3 = st.columns([1, 6, 1])

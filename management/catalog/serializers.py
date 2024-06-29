@@ -18,34 +18,56 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         course_name = data.get('title')
-        if Course.objects.filter(title=course_name).exists():
-            raise ValidationError(f"Course with name '{course_name}' already exists.")
-        return data
+
+        try:
+            Course.objects.get(title=course_name)
+            raise serializers.ValidationError(
+                f"Course with title '{course_name}' already exists.")
+        except Course.DoesNotExist:
+            return data
+
+    def create(self, validated_data):
+        return Course.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+        instance.save()
+        return instance
 
 
 class CourseModuleSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = CourseModule
         fields = ('id', 'title', 'description', 'course')
 
     def validate(self, data):
         module_title = data.get('title')
-        if CourseModule.objects.filter(title=module_title).exists():
-            raise ValidationError(f"Course with name '{module_title}' already exists.")
-        return data
+        course = data.get('course')
+
+        try:
+            module = CourseModule.objects.get(title=module_title, course=course)
+            if self.instance and module.pk == self.instance.pk:
+                return data
+            else:
+                raise serializers.ValidationError(f"Course module with title '{module_title}' already exists for this course.")
+        except CourseModule.DoesNotExist:
+            return data
+
+    def create(self, validated_data):
+        return CourseModule.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+        instance.save()
+        return instance
 
 
 class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = ('id', 'title', 'module', 'type', 'description', 'date_time')
-
-    def validate(self, data):
-        lesson_title = data.get('title')
-        if Lesson.objects.filter(title=lesson_title).exists():
-            raise ValidationError(f"Course with name '{lesson_title}' already exists.")
-        return data
 
 
 class LessonContentSerializer(serializers.ModelSerializer):

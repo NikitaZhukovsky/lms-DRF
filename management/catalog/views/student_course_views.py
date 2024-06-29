@@ -35,7 +35,7 @@ class StudentCourseViewSet(APIView):
     def get(self, request, student_course_id):
         try:
             student_courses = StudentCourse.objects.get(id=student_course_id)
-            serializer = StudentCourseSerializer(student_courses, many=True)
+            serializer = StudentCourseSerializer(student_courses)
             return Response(serializer.data)
         except StudentCourse.DoesNotExist:
             raise NotFound(f"No student-course relationships found.")
