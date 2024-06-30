@@ -50,6 +50,22 @@ def delete_lesson_content(lesson_id):
             )
 
 
+@shared_task()
+def add_lesson_content(lesson_id):
+    lesson_content = LessonContent.objects.get(lesson_id=lesson_id)
+    lesson = Lesson.objects.get(id=lesson_id)
+    course_module = CourseModule.objects.get(id=lesson.module_id)
+    course = Course.objects.get(id=course_module.course_id)
+    student_courses = StudentCourse.objects.filter(course=course)
+    if student_courses:
+        for student_course in student_courses:
+            send_mail(
+                f"Файл {lesson_content.name} был добавлен",
+               f"Здравствуйте, {student_course.student.first_name},"
+               f" файл {lesson_content.name} для занятия '{lesson.title}' в модуле '{course_module.title}' был добавлен.",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[student_course.student.email]
+            )
 
 
 

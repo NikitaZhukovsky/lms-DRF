@@ -28,6 +28,11 @@ class StudentCourseView(APIView):
         else:
             raise PermissionDenied("Only staff users can add students to courses.")
 
+    def get(self, request):
+        queryset = StudentCourse.objects.all()
+        serializer = StudentCourseSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class StudentCourseViewSet(APIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
