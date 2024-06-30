@@ -19,7 +19,7 @@ Feature-rich learning management system. You may want to build a learning manage
 - When you connect to the course, you will receive an email message.
 - In case of any change in the course or class, sending a message to students connected to the course by email.
 - Generating reports on academic performance and attendance.
-- An application on Streamlit to get statistics on the average score and attendance of classes
+- An application on Streamlit to get statistics on the average score and attendance of classes.
 - Swagger  
 - Prospector
 - Pytest
@@ -92,11 +92,10 @@ python manage.py createsuperuser
 ```bash
 python manage.py runserver
 ```
-# Start the celery and celery-beat:
+# Start Сelery:
 ```bash
-celery --app management beat -l info
+cd management
 ```
-
 ```bash
 celery --app management worker --pool=solo -l info
 ```
@@ -137,6 +136,14 @@ To start the prospector, you need to enter the command:
 ```bash
 prospector
 ```
+# Email notifications:
+- When adding a student to a course.
+- When a student is removed from the course.
+- When adding a student to a group.  
+- When adding a student to a group.
+- When removing a student from a group.  
+- When adding new material for classes.
+- When deleting lesson material.  
 
 
 # Alternatively, you can create a container from a Docker image:
