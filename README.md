@@ -115,6 +115,17 @@ streamlit run app.py
 
 Last but not least, go to this address http://127.0.0.1:8000 and streamlit: http://localhost:8501  
 To get the API documentation, you can add it to the url **/doc** and swagger will open.
+# Postman:
+You can import the `LMS.postman_collection collection.json` from management to postman.
+
+# Email notifications:
+- When adding a student to a course.
+- When a student is removed from the course.
+- When adding a student to a group.  
+- When adding a student to a group.
+- When removing a student from a group.  
+- When adding new material for classes.
+- When deleting lesson material.  
 
 # Pytest:
 - Test for creating and deleting a course.  
@@ -136,15 +147,6 @@ To start the prospector, you need to enter the command:
 ```bash
 prospector
 ```
-# Email notifications:
-- When adding a student to a course.
-- When a student is removed from the course.
-- When adding a student to a group.  
-- When adding a student to a group.
-- When removing a student from a group.  
-- When adding new material for classes.
-- When deleting lesson material.  
-
 
 # Alternatively, you can create a container from a Docker image:
 ```bash
