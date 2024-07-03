@@ -35,5 +35,5 @@ jobs:
       - name: Run Tests
         run: |
           cd management
-          pytest
+          pytest || false
 
