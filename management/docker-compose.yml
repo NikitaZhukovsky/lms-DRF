@@ -36,7 +36,36 @@ services:
       - POSTGRES_DB=$DATABASE_NAME
     ports:
       - "5433:5432"
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  celery:
+    restart: always
+    build:
+      context: .
+    command: >
+      sh -c "sleep 10 && celery -A management worker -l info"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - app
+      - rabbitmq
 
+  celery-beat:
+    restart: always
+    build:
+      context: .
+    command: >
+      sh -c "sleep 10 && celery -A management beat -l info"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - app
+      - rabbitmq
 
 volumes:
   postgres_data:
