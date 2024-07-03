@@ -19,10 +19,6 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Set up .env
-        run: |
-          echo "${{secrets.ENV_FILE}}" > management/.env
-
       - name: Run db
         run: |
           docker-compose -f management/docker-compose.yml up -d db
