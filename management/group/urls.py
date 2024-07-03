@@ -17,12 +17,12 @@ urlpatterns = [
     path('student-group/<int:student_group_id>/', StudentGroupViewSet.as_view(), name='student_group_set'),
     path('students/<int:student_id>/average-grade/', StudentAverageGradeViewSet.as_view({'get': 'list'}),
          name='student-average-grade'),
-    path('groups/<int:group_id>/average-grade/', GroupAverageGradeViewSet.as_view({'get': 'list'}),
+    path('<int:group_id>/average-grade/', GroupAverageGradeViewSet.as_view({'get': 'list'}),
          name='group-average-grade'),
     path('average-grade/', AllGroupsAverageGradeViewSet.as_view({'get': 'list'}),
           name='all_groups_average_grade'),
     path('students/average-grade/', AllStudentAverageGradeViewSet.as_view({'get': 'list'}),
          name='all_students_average_grader'),
-    path('students/attendance_percentage/', AttendancePercentageView.as_view(), name='attendance_percentage')
+    path('students/attendance-percentage/', AttendancePercentageView.as_view(), name='attendance_percentage')
 ]
 

@@ -28,6 +28,11 @@ class StudentCourseView(APIView):
         else:
             raise PermissionDenied("Only staff users can add students to courses.")
 
+    def get(self, request):
+        queryset = StudentCourse.objects.all()
+        serializer = StudentCourseSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class StudentCourseViewSet(APIView):
     permission_classes = [IsAuthenticated, IsAdminUser]
@@ -35,7 +40,7 @@ class StudentCourseViewSet(APIView):
     def get(self, request, student_course_id):
         try:
             student_courses = StudentCourse.objects.get(id=student_course_id)
-            serializer = StudentCourseSerializer(student_courses, many=True)
+            serializer = StudentCourseSerializer(student_courses)
             return Response(serializer.data)
         except StudentCourse.DoesNotExist:
             raise NotFound(f"No student-course relationships found.")

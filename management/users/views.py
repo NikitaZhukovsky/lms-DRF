@@ -9,6 +9,13 @@ from rest_framework import status, viewsets
 from rest_framework import generics
 
 
+class TestLoginView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        return Response('Hello')
+
+
 class ActivateUser(UserViewSet):
 
     def get_serializer(self, *args, **kwargs):

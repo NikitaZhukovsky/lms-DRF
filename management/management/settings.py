@@ -208,9 +208,10 @@ SWAGGER_SETTINGS = {
     }
 }
 
-CELERY_BROKER_URL = 'amqp://guest:guest@rabbitmq:5672/'
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost'
 CELERY_RESULT_BACKEND = 'rpc://'
 CELERY_BROKER_SCHEDULER = 'django_celery_beat/schedulers:DatabaseScheduler'
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
