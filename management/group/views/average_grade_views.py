@@ -77,7 +77,7 @@ class GroupAverageGradeViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class AllGroupsAverageGradeViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated, IsAdminUser]
     serializer_class = StudentLessonSerializer
     http_method_names = ['get']
 

@@ -7,6 +7,7 @@ from users.serializers import CustomUserSerializer, UserViewSerializer, UserUpda
 from users.models import CustomUser
 from rest_framework import status, viewsets
 from rest_framework import generics
+from drf_yasg.utils import swagger_auto_schema
 
 
 class TestLoginView(APIView):
@@ -33,6 +34,7 @@ class ActivateUser(UserViewSet):
 class AddTeacherView(APIView):
     permission_classes = (IsAuthenticated, )
 
+    @swagger_auto_schema(request_body=CustomUserSerializer)
     def patch(self, request):
         email = request.data.get("email")
         admin = request.user
@@ -52,7 +54,7 @@ class AddTeacherView(APIView):
 
 
 class TeacherViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, )
     serializer_class = UserViewSerializer
 
     def get_queryset(self):
