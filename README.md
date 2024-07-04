@@ -22,7 +22,8 @@ Feature-rich learning management system. You may want to build a learning manage
 - An application on Streamlit to get statistics on the average score and attendance of classes.
 - Swagger  
 - Prospector
-- Pytest
+- Pytest  
+- CI  
 
 # Database Models:
 ![db-scheme](https://github.com/NikitaZhukovsky/lms-DRF/blob/master/assets/lms.png)
@@ -159,4 +160,9 @@ Previously, in the `.env` file, you need to change the following parameters:
 
 DATABASE_HOST=db   
 CELERY_HOST=rabbitmq    
+
+And in `settings.py` change the line:  
+
+CELERY_BROKER_URL='amqp://guest:guest@rabbitmq:5672/' 
+
 
