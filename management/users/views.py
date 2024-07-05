@@ -2,8 +2,8 @@ from djoser.views import UserViewSet
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied, NotFound
-from rest_framework.permissions import IsAuthenticated
-from users.serializers import CustomUserSerializer, UserViewSerializer, UserUpdateSerializer
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from users.serializers import CustomUserSerializer, UserViewSerializer, UserUpdateSerializer, UserAnalysisSerializer
 from users.models import CustomUser
 from rest_framework import status, viewsets
 from rest_framework import generics
@@ -11,7 +11,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 
 class TestLoginView(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated, ]
 
     def get(self, request):
         return Response('Hello')
@@ -32,7 +32,7 @@ class ActivateUser(UserViewSet):
 
 
 class AddTeacherView(APIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = [IsAuthenticated, ]
 
     @swagger_auto_schema(request_body=CustomUserSerializer)
     def patch(self, request):
@@ -54,7 +54,7 @@ class AddTeacherView(APIView):
 
 
 class TeacherViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = [IsAuthenticated, ]
     serializer_class = UserViewSerializer
 
     def get_queryset(self):
@@ -74,7 +74,7 @@ class TeacherViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class StudentViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated, ]
     serializer_class = UserViewSerializer
 
     def get_queryset(self):
@@ -94,7 +94,7 @@ class StudentViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class UserUpdateView(generics.UpdateAPIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated, ]
     serializer_class = UserUpdateSerializer
 
     def get_object(self):
@@ -106,3 +106,10 @@ class UserUpdateView(generics.UpdateAPIView):
         serializer.save()
 
 
+class UserAnalysisView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser]
+
+    def get(self, request):
+        queryset = CustomUser.objects.all()
+        serializer = UserAnalysisSerializer(queryset, many=True)
+        return Response(serializer.data)
