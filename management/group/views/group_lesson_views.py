@@ -3,7 +3,7 @@ from group.serializers import (GroupSerializer, StudentLessonSerializer)
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import viewsets
 from rest_framework.parsers import MultiPartParser, FormParser
-from group.permissions.teacher_permission import IsTeacherOrAdmin
+from group.permissions.teacher_permission import IsTeacher
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -11,12 +11,12 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     parser_classes = [MultiPartParser, FormParser]
-    http_method_names = ['get', 'post', 'put', 'head', 'options', 'delete']
+    http_method_names = ['get', 'post', 'put', 'delete']
 
 
 class StudentLessonViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, IsTeacherOrAdmin]
+    permission_classes = [IsAuthenticated, IsTeacher]
     queryset = StudentLesson.objects.all()
     serializer_class = StudentLessonSerializer
     parser_classes = [MultiPartParser, FormParser]
-    http_method_names = ['get', 'post', 'put', 'head', 'options', 'delete']
+    http_method_names = ['get', 'post', 'put', 'delete']

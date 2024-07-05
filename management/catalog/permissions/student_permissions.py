@@ -26,7 +26,7 @@ class HasLessonAccess(permissions.BasePermission):
 class HasLessonContentAccess(permissions.BasePermission):
     def has_permission(self, request, view):
         user = request.user
-        if user.is_staff:
+        if user.is_staff or user.role == 'Teacher':
             return True
         else:
             lesson_content_id = view.kwargs.get('pk')

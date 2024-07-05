@@ -5,13 +5,14 @@ from rest_framework.response import Response
 from rest_framework import viewsets, status
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.http import FileResponse
-from catalog.permissions.student_permissions import HasLessonContentAccess
+from catalog.permissions.student_permissions import HasLessonContentAccess, HasLessonAccess
+from group.permissions.teacher_permission import IsTeacher
 from catalog.tasks import delete_lesson_content, add_lesson_content
 from django.core.files.storage import default_storage
 
 
 class LessonContentViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated, HasLessonContentAccess]
+    permission_classes = [IsAuthenticated, HasLessonContentAccess, IsTeacher]
     queryset = LessonContent.objects.all()
     serializer_class = LessonContentSerializer
     parser_classes = (MultiPartParser, FormParser)

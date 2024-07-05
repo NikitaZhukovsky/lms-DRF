@@ -2,9 +2,12 @@ from django.db.models import Count, Q
 from django.http import JsonResponse
 from rest_framework.views import APIView
 from group.models import StudentLesson
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 
 class AttendancePercentageView(APIView):
+    permission_classes = [IsAuthenticated, IsAdminUser, ]
+
     def get(self, request):
 
         students_attendance = StudentLesson.objects.values('student').annotate(
