@@ -29,6 +29,10 @@ Feature-rich learning management system. You may want to build a learning manage
 ![db-scheme](https://github.com/NikitaZhukovsky/lms-DRF/blob/master/assets/lms.png)
 
 # Streamlit:
+Login Form:
+<p align="center">
+  <img src="https://github.com/NikitaZhukovsky/lms-DRF/blob/master/assets/login_form.png" alt="Login Form" width="300"/>
+</p>  
 Groups average grade:  
 <p align="center">
   <img src="https://github.com/NikitaZhukovsky/lms-DRF/blob/master/assets/groups_average.png" alt="Groups average grade" width="500"/>
@@ -37,6 +41,11 @@ Students average grade:
 <p align="center">
   <img src="https://github.com/NikitaZhukovsky/lms-DRF/blob/master/assets/students_average.png" alt="Students average grade" width="500"/>
 </p>  
+Users attendance:
+<p align="center">
+  <img src="https://github.com/NikitaZhukovsky/lms-DRF/blob/master/assets/users_attendance.png" alt="Users attendance" width="500"/>
+</p> 
+
 
 
   # Requirements:
@@ -126,7 +135,59 @@ You can import the `LMS.postman_collection collection.json` from management to p
 - When adding a student to a group.
 - When removing a student from a group.  
 - When adding new material for classes.
-- When deleting lesson material.  
+- When deleting lesson material.
+
+# Permissions:
+- IsAuthenticated  
+- IsAdminUser
+- HasLessonAccess
+```python
+class HasLessonAccess(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        user = request.user
+        if user.is_staff:
+            return True
+        else:
+            lesson_id = view.kwargs.get('lesson_id')
+            try:
+                lesson = Lesson.objects.get(pk=lesson_id)
+            except Lesson.DoesNotExist:
+                raise PermissionDenied('Lesson does not exist')
+            module = lesson.module
+            course = module.course
+
+            return StudentCourse.objects.filter(student=user, course=course).exists() and \
+                   CourseModule.objects.filter(id=module.id, course=course).exists()
+```
+- HasLessonContentAccess
+```python
+class HasLessonContentAccess(permissions.BasePermission):
+    def has_permission(self, request, view):
+        user = request.user
+        if user.is_staff:
+            return True
+        else:
+            lesson_content_id = view.kwargs.get('pk')
+            try:
+                lesson_content = LessonContent.objects.get(pk=lesson_content_id)
+            except LessonContent.DoesNotExist:
+                raise PermissionDenied('Lesson content does not exist')
+            lesson = lesson_content.lesson
+            module = lesson.module
+            course = module.course
+
+            return StudentCourse.objects.filter(student=user, course=course).exists()
+
+```
+- IsTeacher
+```python
+class IsTeacher(BasePermission):
+    def has_permission(self, request, view):
+        if request.user.is_authenticated:
+            return request.user.is_staff or request.user.role == 'Teacher'
+        return False
+```
 
 # Pytest:
 - Test for creating and deleting a course.  
