@@ -24,6 +24,9 @@ class CourseImage(models.Model):
     name = models.CharField(max_length=100, default=None, null=True, blank=True)
     file = models.ImageField(upload_to='courses_images/')
 
+    def __str__(self):
+        return f"{self.name}"
+
 
 class StudentCourse(models.Model):
     student = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=False, blank=False)
@@ -64,3 +67,6 @@ class LessonContent(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, default=None, null=True, blank=True)
     file = models.FileField(upload_to='lessons_files/', null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.name}"

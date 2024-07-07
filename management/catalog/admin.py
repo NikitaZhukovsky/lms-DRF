@@ -21,9 +21,17 @@ class LessonAdmin(admin.ModelAdmin):
     search_fields = ['title', 'type']
 
 
+class LessonContentAdmin(admin.ModelAdmin):
+    list_display = ['lesson', 'name']
+
+
+class CourseImageAdmin(admin.ModelAdmin):
+    list_display = ['course', 'name']
+
+
 admin.site.register(Course, CourseAdmin)
 admin.site.register(CourseModule, CourseModuleAdmin)
 admin.site.register(Lesson, LessonAdmin)
-admin.site.register(CourseImage)
+admin.site.register(CourseImage, CourseImageAdmin)
 admin.site.register(StudentCourse, StudentCourseAdmin)
-admin.site.register(LessonContent)
+admin.site.register(LessonContent, LessonContentAdmin)
