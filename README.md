@@ -19,11 +19,13 @@ Feature-rich learning management system. You may want to build a learning manage
 - When you connect to the course, you will receive an email message.
 - In case of any change in the course or class, sending a message to students connected to the course by email.
 - Generating reports on academic performance and attendance.
-- An application on Streamlit to get statistics on the average score and attendance of classes.
-- Swagger  
-- Prospector
-- Pytest  
-- CI  
+- An application on Streamlit to get statistics on the average score and attendance of classes.  
+- Analytics on Streamlit.  
+- Chat Bot (GigaChat).    
+- Swagger.  
+- Prospector.
+- Pytest.   
+- CI.    
 
 # Database Models:
 ![db-scheme](https://github.com/NikitaZhukovsky/lms-DRF/blob/master/assets/lms.png)
@@ -45,7 +47,10 @@ Users attendance:
 <p align="center">
   <img src="https://github.com/NikitaZhukovsky/lms-DRF/blob/master/assets/users_attendance.png" alt="Users attendance" width="500"/>
 </p> 
-
+Chat Bot:
+<p align="center">
+  <img src="https://github.com/NikitaZhukovsky/lms-DRF/blob/master/assets/chat_bot.png" alt="Chat Bot" width="500"/>
+</p> 
 
 
   # Requirements:
