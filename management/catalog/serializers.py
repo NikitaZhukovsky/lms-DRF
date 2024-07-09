@@ -78,8 +78,8 @@ class LessonContentSerializer(serializers.ModelSerializer):
     def validate(self, data):
         lesson_id = data.get('lesson')
         name = data.get('name')
-        if LessonContent.objects.filter(lesson=lesson_id, name=name).exists():
-            raise ValidationError(f"Lesson Content with name: {name} is already exists.")
+        if LessonContent.objects.filter(lesson=lesson_id).exists():
+            raise ValidationError(f"Lesson Content is already exists.")
         return data
 
 

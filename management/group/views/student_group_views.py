@@ -3,7 +3,7 @@ from group.serializers import StudentGroupSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
-from group.tasks import update_course_notif, delete_course_notif
+from group.tasks import update_group_notif, delete_group_notif
 from rest_framework.views import APIView
 from drf_yasg.utils import swagger_auto_schema
 from django.shortcuts import get_object_or_404
@@ -21,7 +21,7 @@ class StudentGroupView(APIView):
             student_group = input_serializer.save()
             group_id = student_group.group.id
             student_id = student_group.student.id
-            update_course_notif(group_id, student_id)
+            update_group_notif(group_id, student_id)
             return Response(input_serializer.data)
         else:
             raise PermissionDenied("Only staff users can add course.")
@@ -50,6 +50,6 @@ class StudentGroupViewSet(APIView):
 
     def delete(self, request, student_group_id):
         student_group = get_object_or_404(StudentGroup, id=student_group_id)
-        delete_course_notif(student_group)
+        delete_group_notif(student_group)
         student_group.delete()
         return Response()

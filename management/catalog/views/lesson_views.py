@@ -10,12 +10,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 
 class LessonView(APIView):
-    def get_permissions(self):
-        if self.request.method == 'POST':
-            return [IsAuthenticated(), IsAdminUser()]
-        elif self.request.method == 'GET':
-            return [IsAuthenticated(), ]
-        return []
+    permission_classes = [IsAuthenticated, IsAdminUser, ]
 
     @swagger_auto_schema(request_body=LessonSerializer)
     def post(self, request):

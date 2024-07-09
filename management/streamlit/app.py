@@ -1,7 +1,9 @@
 import streamlit as st
+import time
 import requests
 from groups import fetch_groups, groups_page
 from students import fetch_students_average_grade, students_page, fetch_attendance_percentage
+from users import users_page
 
 LOGIN_URL = "http://127.0.0.1:8000/users/auth/jwt/create/"
 
@@ -44,16 +46,24 @@ def main():
         else:
             st.info("Welcome!")
 
-        selection = st.sidebar.radio("Select an option", ("Groups", "Students"))
+        selection = st.sidebar.radio("Select an option", ("Groups", "Students", "Users"))
 
     if logged_in:
         if selection == "Groups":
+            with st.status("Loading..."):
+                time.sleep(2)
             groups = fetch_groups()
             groups_page(groups)
         elif selection == "Students":
+            with st.status("Loading..."):
+                time.sleep(2)
             students = fetch_students_average_grade()
             attendance_percentage = fetch_attendance_percentage()
             students_page(students,  attendance_percentage)
+        elif selection == "Users":
+            with st.status("Loading..."):
+                time.sleep(2)
+            users_page()
 
 
 if __name__ == "__main__":

@@ -7,6 +7,9 @@ class Group(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, null=False, blank=False, unique=True)
 
+    def __str__(self):
+        return f"{self.name}"
+
 
 class StudentGroup(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE, null=False, blank=False)

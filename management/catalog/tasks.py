@@ -52,7 +52,7 @@ def delete_lesson_content(lesson_id):
 
 @shared_task()
 def add_lesson_content(lesson_id):
-    lesson_content = LessonContent.objects.get(lesson_id=lesson_id)
+    lesson_content = LessonContent.objects.filter(lesson_id=lesson_id).first()
     lesson = Lesson.objects.get(id=lesson_id)
     course_module = CourseModule.objects.get(id=lesson.module_id)
     course = Course.objects.get(id=course_module.course_id)

@@ -88,3 +88,4 @@ def students_page(students, attendance_percentage):
 students = fetch_students_average_grade()
 attendance_percentage = fetch_attendance_percentage()
 students_page(students, attendance_percentage)
+
