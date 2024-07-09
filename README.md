@@ -236,3 +236,4 @@ And in `settings.py` change the line:
 CELERY_BROKER_URL='amqp://guest:guest@rabbitmq:5672/' 
 
 
+Show your support by ⭐️ this project!
