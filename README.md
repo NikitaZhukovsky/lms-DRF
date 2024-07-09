@@ -52,7 +52,11 @@ Chat Bot:
   <img src="https://github.com/NikitaZhukovsky/lms-DRF/blob/master/assets/chat_bot.png" alt="Chat Bot" width="500"/>
 </p> 
 
-
+To make the chatbot work, you need to create a `.streamlit` and `secrets.toml` inside it in the `streamlit` folder.
+```python
+CLIENT_ID = "YOUR_CLIENT_ID"
+SECRET = "YOUR_SECRET"
+```
   # Requirements:
 - Python3.8+
 - PostgreSQL
