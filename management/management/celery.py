@@ -12,7 +12,7 @@ app.autodiscover_tasks()
 CELERY_BEAT_SCHEDULE = {
     'send_monthly_report': {
         'task': 'users.tasks.send_monthly_report',
-        'schedule': crontab(minute='*/5'),
+        'schedule': crontab(minute='*/1'),
     },
 }
 

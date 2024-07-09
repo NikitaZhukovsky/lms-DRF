@@ -6,7 +6,7 @@ from django.db.models import Q
 
 
 @shared_task()
-def update_course_notif(group_id, student_id):
+def update_group_notif(group_id, student_id):
     student_group = StudentGroup.objects.get(
         Q(group_id=group_id) &
         Q(student_id=student_id)
@@ -23,7 +23,7 @@ def update_course_notif(group_id, student_id):
 
 
 @shared_task()
-def delete_course_notif(student_group):
+def delete_group_notif(student_group):
     group = student_group.group
     student = student_group.student
     send_mail(

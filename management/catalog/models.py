@@ -1,6 +1,5 @@
 from django.db import models
 from users.models import CustomUser
-from storages.backends.s3boto3 import S3Boto3Storage
 
 
 class Course(models.Model):
