@@ -1,7 +1,6 @@
 from rest_framework import permissions
 from catalog.models import Course, StudentCourse, CourseModule, Lesson, LessonContent
 from rest_framework.exceptions import PermissionDenied
-from django.shortcuts import get_object_or_404
 
 
 class HasLessonAccess(permissions.BasePermission):
@@ -24,6 +23,7 @@ class HasLessonAccess(permissions.BasePermission):
 
 
 class HasLessonContentAccess(permissions.BasePermission):
+
     def has_permission(self, request, view):
         user = request.user
         if user.is_staff or user.role == 'Teacher':

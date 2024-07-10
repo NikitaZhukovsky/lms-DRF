@@ -54,7 +54,7 @@ class CourseViewSet(APIView):
         input_serializer = CourseSerializer(instance=course, data=request.data)
         input_serializer.is_valid(raise_exception=True)
         input_serializer.save()
-        return Response()
+        return Response(input_serializer.data)
 
     def delete(self, request, course_id):
         get_object_or_404(Course, id=course_id).delete()

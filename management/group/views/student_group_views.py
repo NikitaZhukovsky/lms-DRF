@@ -46,7 +46,7 @@ class StudentGroupViewSet(APIView):
         input_serializer = StudentGroupSerializer(instance=course, data=request.data)
         input_serializer.is_valid(raise_exception=True)
         input_serializer.save()
-        return Response()
+        return Response(input_serializer.data)
 
     def delete(self, request, student_group_id):
         student_group = get_object_or_404(StudentGroup, id=student_group_id)

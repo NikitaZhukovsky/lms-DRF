@@ -90,10 +90,25 @@ class StudentCourseSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         student_id = data.get('student')
-        course_id = data.get('course')
-        if StudentCourse.objects.filter(student=student_id, course=course_id).exists():
-            raise ValidationError(f"The relationship between students and the course already exists.")
+
+        if self.instance is None and StudentCourse.objects.filter(student=student_id).exists():
+            raise ValidationError(f"The student is already connected to the course")
+
         return data
+
+    def create(self, validated_data):
+        student_id = validated_data.get('student')
+
+        if StudentCourse.objects.filter(student=student_id).exists():
+            raise ValidationError(f"The student is already connected to the course")
+
+        return StudentCourse.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+        instance.save()
+        return instance
 
 
 class CourseImageSerializer(serializers.ModelSerializer):

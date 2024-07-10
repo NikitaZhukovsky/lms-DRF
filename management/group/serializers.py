@@ -14,11 +14,34 @@ class StudentGroupSerializer(serializers.ModelSerializer):
         fields = ['id', 'group', 'student']
 
     def validate(self, data):
-        student = data['student']
+        student = data.get('student')
+        group = data.get('group')
+
+        if self.instance is None and StudentGroup.objects.filter(student=student).exists():
+            raise serializers.ValidationError("The student is already connected to another group")
+
+        if self.instance is None and StudentGroup.objects.filter(student=student, group=group).exists():
+            raise serializers.ValidationError("The student is already connected to this group")
+
+        return data
+
+    def create(self, validated_data):
+        student = validated_data.get('student')
+        group = validated_data.get('group')
 
         if StudentGroup.objects.filter(student=student).exists():
-            raise serializers.ValidationError("You can't add a student to another group")
-        return data
+            raise serializers.ValidationError("The student is already connected to another group")
+
+        if StudentGroup.objects.filter(student=student, group=group).exists():
+            raise serializers.ValidationError("The student is already connected to this group")
+
+        return StudentGroup.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+        instance.save()
+        return instance
 
 
 class StudentLessonSerializer(serializers.ModelSerializer):
@@ -31,12 +54,10 @@ class StudentLessonSerializer(serializers.ModelSerializer):
         student = data['student']
         try:
             instance = StudentLesson.objects.get(lesson=lesson, student=student)
-            # Если запись существует, обновите ее
             for key, value in data.items():
                 setattr(instance, key, value)
             return instance
         except StudentLesson.DoesNotExist:
-            # Если запись не существует, создайте новую
             return data
 
     def create(self, validated_data):

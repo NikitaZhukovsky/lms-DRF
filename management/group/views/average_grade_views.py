@@ -8,7 +8,6 @@ from django.db.models import Avg
 
 class StudentAverageGradeViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated, IsAdminUser]
-    serializer_class = StudentLessonSerializer
     http_method_names = ['get']
 
     def get_queryset(self):
@@ -26,7 +25,6 @@ class StudentAverageGradeViewSet(viewsets.ReadOnlyModelViewSet):
 
 class AllStudentAverageGradeViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated, IsAdminUser]
-    serializer_class = StudentLessonSerializer
     http_method_names = ['get']
 
     def get_queryset(self):
@@ -78,7 +76,6 @@ class GroupAverageGradeViewSet(viewsets.ReadOnlyModelViewSet):
 
 class AllGroupsAverageGradeViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated, IsAdminUser]
-    serializer_class = StudentLessonSerializer
     http_method_names = ['get']
 
     def get_queryset(self):

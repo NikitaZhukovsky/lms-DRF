@@ -52,7 +52,7 @@ class LessonViewSet(APIView):
             input_serializer = LessonSerializer(instance=lesson, data=request.data)
             input_serializer.is_valid(raise_exception=True)
             input_serializer.save()
-            return Response()
+            return Response(input_serializer.data)
         else:
             raise PermissionDenied("Only staff users can update lesson.")
 
